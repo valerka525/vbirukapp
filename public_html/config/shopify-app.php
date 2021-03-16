@@ -305,6 +305,7 @@ return [
     */
 
     'webhooks' => [
+    /*
         [
             'topic' => env('SHOPIFY_WEBHOOK_1_TOPIC', 'app/uninstalled'),
             'address' => env('SHOPIFY_WEBHOOK_1_ADDRESS', 'https://some-app.com/webhook/app-uninstalled')
@@ -313,7 +314,7 @@ return [
             'topic' => env('SHOPIFY_WEBHOOK_2_TOPIC'),
             'address' => env('SHOPIFY_WEBHOOK_2_ADDRESS')
         ],
-        /*
+        
             [
                 'topic' => env('SHOPIFY_WEBHOOK_3_TOPIC', 'orders/create'),
                 'address' => env('SHOPIFY_WEBHOOK_3_ADDRESS', 'https://some-app.com/webhook/orders-create')
@@ -332,12 +333,13 @@ return [
     */
 
     'scripttags' => [
+    /*
         [
             'src' => env('SHOPIFY_SCRIPTTAG_1_SRC', 'https://some-app.com/some-controller/js-method-response'),
             'event' => env('SHOPIFY_SCRIPTTAG_1_EVENT', 'onload'),
             'display_scope' => env('SHOPIFY_SCRIPTTAG_1_DISPLAY_SCOPE', 'online_store')
         ],
-        /*
+        
             [
                 'src' => env('SHOPIFY_SCRIPTTAG_1_SRC', 'https://some-app.com/some-controller/js-method-response'),
                 'event' => env('SHOPIFY_SCRIPTTAG_1_EVENT', 'onload'),
