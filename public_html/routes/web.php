@@ -14,11 +14,15 @@ use function Osiset\ShopifyApp\getShopifyConfig;
 |
 */
 
-Route::group(['prefix' => getShopifyConfig('prefix'), 'middleware' => ['itp', 'web']], function () {
+Route::group(['prefix' => getShopifyConfig('prefix'), 'middleware' => ['itp', 'web', 'auth.shopify', 'billable']], function () {
 
-    Route::get('/','App\HomeController@index')
-            ->middleware(['auth.shopify', 'billable'])
-            ->name(getShopifyConfig('route_names.home'));
+    Route::get('/', 'App\ThemesController@home')->name('home');
+    Route::get('/theme/{themeId}/{themeName}', 'App\ThemesController@makeBackup')->name('makeBackup');
+    Route::get('/delete/{backup}', 'App\ThemesController@themeDelete')->name('themeDelete');
+    Route::get('/restore/{backup}', 'App\ThemesController@restoreBackup')->name('restoreBackup');
+    Route::post('/scheduler/add', 'App\ThemesController@addSchedule')->name('addSchedule');
+    Route::get('/scheduler/delete/{id}', 'App\ThemesController@deleteSchedule')->name('deleteSchedule');
+
 
     /*
      * JWT Token Check for some ajax action via auth.token middleware

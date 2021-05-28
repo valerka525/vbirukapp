@@ -38,4 +38,13 @@ class User extends Authenticatable implements IShopModel
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function themes(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(Theme::class);
+    }
+    public function schedules(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(ThemeBackupSchedule::class);
+    }
 }
