@@ -43,6 +43,7 @@ class User extends Authenticatable implements IShopModel
     {
         return $this->hasMany(Theme::class);
     }
+
     public function schedules(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(ThemeBackupSchedule::class);
