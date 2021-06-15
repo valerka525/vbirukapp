@@ -4,6 +4,7 @@ namespace App\Http\Controllers\App;
 
 use App\Http\Controllers\Controller;
 use App\Services\ThemeBackup;
+use App\Services\ThemeBackupScheduler;
 use App\Theme;
 use App\ThemeBackupSchedule;
 use Illuminate\Http\Request;
@@ -52,30 +53,17 @@ class ThemesController extends Controller
 
     protected static function addSchedule(Request $request)
     {
-        $shop = Auth::user();
-        $schedulesCount = $shop->schedules()->count();
-        if ($schedulesCount >= 3) {
-            return redirect()->route('home')->with('warning', __('flashes.schedules_limit'))->with('show', 'schedules');
-        }
-        $user_id = $shop->id;
-        $theme = preg_split("#/#", $request['theme']);
-        ThemeBackupSchedule::create([
-            'user_id' => $user_id,
-            'theme_id' => $theme[0],
-            'theme_name' => $theme[1],
-            'interval' => $request['interval'],
-        ]);
-        return redirect()->route('home')->with('success', __('flashes.schedule_created'))->with('show', 'schedules');
+        $schedule = new ThemeBackupScheduler($request['interval'], $request['theme']);
+        $result = ($schedule->addSchedule()) ? ['type' => 'success', 'message' =>
+            __('flashes.schedule_created')] : ['type' => 'warning', 'message' => __('flashes.schedules_limit')];
+        return redirect()->route('home')->with($result['type'], $result['message'])->with('show', 'schedules');
     }
 
     protected static function deleteSchedule($id)
     {
-        ThemeBackupSchedule::where('id', $id)->delete();
-        return redirect()->route('home')->with('warning', __('flashes.schedule_deleted'))->with('show', 'schedules');
+        $schedule = new ThemeBackupScheduler(null, null, $id);
+        $schedule->deleteSchedule();
+        return redirect()->route('home')->with('warning', __('flashes.schedule_deleted'))->
+        with('show', 'schedules');
     }
 }
-
-/*
-Вынести шедулы из контроллера в сервис
-?vue
- */
