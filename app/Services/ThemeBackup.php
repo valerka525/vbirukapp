@@ -16,16 +16,17 @@ class ThemeBackup
     private $backupId;
     private $backupPath;
     private $shop;
+    private $createdAt;
 
-    public function __construct($themeName = null, $themeId = null, $backupId = null, $backupPath = null, $shop = null)
+    public function __construct($themeName = null, $themeId = null, $backupId = null, $backupPath = null, $shop = null,
+                                $createdAt = null)
     {
         $this->themeName = $themeName;
         $this->themeId = $themeId;
         $this->backupId = $backupId;
         $this->backupPath = $backupPath;
-        if (is_null($shop)) {
-            $this->shop = Auth::user();
-        }
+        $this->shop = (is_null($shop)) ? Auth::user() : $shop;
+        $this->createdAt = $createdAt;
     }
 
     public static function autoMakeBackup()
@@ -33,7 +34,7 @@ class ThemeBackup
         $schedules = ThemeBackupSchedule::all();
         foreach ($schedules as $schedule) {
             if (strtotime(Carbon::now()) > (strtotime($schedule->updated_at) + 86400 * $schedule->interval)) {
-                $backup = new ThemeBackup($schedule->theme_name, $schedule->theme_id, null,
+                $backup = new self($schedule->theme_name, $schedule->theme_id, null,
                     null, $schedule->user);
                 $backup->saveBackupToStorage();
                 $schedule->touch();
@@ -47,12 +48,15 @@ class ThemeBackup
         $id = $shop->id;
         $backupsCount = $shop->themes()->count();
         $time = time();
-        $theme = $shop->api()->rest('GET', '/admin/api/' . env('SHOPIFY_API_VERSION') . '/themes/' . $this->themeId
-            . '/assets.json')['body']['assets'];
         $zipFileStoragePath = "$id/themes/$time.zip";
         $zipFileFullPath = storage_path() . "/app/$zipFileStoragePath";
+        if (Storage::missing("$id/themes")) {
+            Storage::makeDirectory("$id/themes");
+        }
         $zip = new ZipArchive;
         $zip->open($zipFileFullPath, ZipArchive::CREATE);
+        $theme = $shop->api()->rest('GET', '/admin/api/' . env('SHOPIFY_API_VERSION') . '/themes/' . $this->themeId
+            . '/assets.json')['body']['assets'];
         foreach ($theme as $key => $asset) {
             $asset = $shop->api()->rest('GET', '/admin/api/' . env('SHOPIFY_API_VERSION') . '/themes/'
                 . $this->themeId . '/assets.json', ['query' =>
@@ -65,7 +69,6 @@ class ThemeBackup
             $zip->addFromString($asset['key'], $assetContent);
         }
         $zip->close();
-        // chmod($zipFileFullPath, 33152);
         Theme::create([
             'user_id' => $id,
             'name' => $this->themeName,
@@ -81,13 +84,13 @@ class ThemeBackup
 
     public function restoreBackupFromStorage()
     {
-        /* После теста на сервере нужно будет реализовать генерацию URL для приватных файлов так как архив не будет
-        отдаваться шопифаю */
-        $archive = Storage::url($this->backupPath);
-        // Временное решение для теста публикации бекапа на локальном окружении
-        $archive = str_replace('vbirukapp', 'b5a1a13d570f.ngrok.io', $archive);
+        $privateArchive = Storage::path($this->backupPath);
+        $publicArchive = md5_file($privateArchive) . '.zip';
+        Storage::copy($this->backupPath, "/public/$publicArchive");
+        $url = Storage::disk('public')->url($publicArchive);
         $put = $this->shop->api()->rest('POST', '/admin/api/' . env('SHOPIFY_API_VERSION') . '/themes.json',
-            ['theme' => ['name' => $this->themeName, 'src' => $archive, 'role' => 'main']]);
+            ['theme' => ['name' => "$this->themeName $this->createdAt", 'src' => $url, 'role' => 'main']]);
+        Storage::disk('public')->delete($publicArchive);
         if (!$put['errors']) {
             return true;
         } else {

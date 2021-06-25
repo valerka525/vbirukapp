@@ -37,7 +37,8 @@ class ThemesController extends Controller
 
     protected static function restoreBackup(Theme $backup)
     {
-        $backup = new ThemeBackup($backup['name'], null, null, $backup['path']);
+        $backup = new ThemeBackup($backup['name'], null, null, $backup['path'], null,
+            $backup['created_at']);
         $result = ($backup->restoreBackupFromStorage()) ? ['type' => 'success', 'message' =>
             __('flashes.backup_published')] : ['type' => 'warning', 'message' => __('flashes.went_wrong')];
         return redirect()->route('home')->with($result['type'], $result['message'])->with('show', 'themes');

@@ -1,10 +1,9 @@
 @extends('shopify-app::layouts.default')
-<link rel="stylesheet" href="/public/css/bootstrap.css"/>
-<link rel="stylesheet" href="/public/css/spinning-button.css"/>
+<link rel="stylesheet" href="/css/bootstrap.css"/>
+<link rel="stylesheet" href="/css/spinning-button.css"/>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"/>
-<script src="/public/js/jquery.js"/></script>
-<script src="/public/js/dashboard.js"/></script>
-<script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+<script src="/js/jquery.js"/></script>
+<script src="/js/dashboard.js"/></script>
 @if(session()->has('show'))
     <script> window.onload = function () {
             myFunction(button = '{{ session()->get('show') }}');

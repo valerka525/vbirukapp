@@ -1,21 +1,7 @@
 @extends('home.layouts.master')
 @section('body')
     <div id="home">
-        <br>
-        <h1 class="display-3">Welcome <span v-html="tab"></span></h1>
-        <div @click="tab='step1'">Step 1</div>
-        <div @click="tab='step2'">Step 2</div>
-        <div @click="tab='step3'">Step 3</div>
-        <hr>
-        <div v-if="tab=='step1'">content step1</div>
     </div>
-   <script> new Vue({
-    el: '#home',
-    data: {
-        tab: "none"
-    }
-    })
-   </script>
     <div id="themes" style="display: none;">
         <div class="table-responsive">
             <table class="table table-striped table-sm">
