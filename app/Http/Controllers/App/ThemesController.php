@@ -32,23 +32,29 @@ class ThemesController extends Controller
     {
         $backup = new ThemeBackup($themeName, $themeId);
         $backup->saveBackupToStorage();
-        return redirect()->route('home')->with(
-            'success',
-            __('flashes.backup_created')
-        )->with('show', 'backups');
+        return redirect()
+            ->route('home')
+            ->with('success', __('flashes.backup_created'))
+            ->with('show', 'backups');
     }
 
     protected static function restoreBackup(Theme $backup)
     {
         $backup = new ThemeBackup(
-            $backup['name'], null, null, $backup['path'], null,
+            $backup['name'],
+            null,
+            null,
+            $backup['path'],
+            null,
             $backup['created_at']
         );
         $result = ($backup->restoreBackupFromStorage()) ? [
             'type' => 'success',
-            'message' =>
-                __('flashes.backup_published')
-        ] : ['type' => 'warning', 'message' => __('flashes.went_wrong')];
+            'message' => __('flashes.backup_published')
+        ] : [
+            'type' => 'warning',
+            'message' => __('flashes.went_wrong')
+        ];
         return redirect()->route('home')->with($result['type'], $result['message'])->with('show', 'themes');
     }
 
@@ -56,10 +62,10 @@ class ThemesController extends Controller
     {
         $backup = new ThemeBackup(null, null, $backup['id'], $backup['path'], null);
         $backup->deleteBackupFromStorage();
-        return redirect()->route('home')->with(
-            'warning',
-            __('flashes.backup_deleted')
-        )->with('show', 'backups');
+        return redirect()
+            ->route('home')
+            ->with('warning', __('flashes.backup_deleted'))
+            ->with('show', 'backups');
     }
 
     protected static function addSchedule(Request $request)
@@ -67,9 +73,11 @@ class ThemesController extends Controller
         $schedule = new ThemeBackupScheduler($request['interval'], $request['theme']);
         $result = ($schedule->addSchedule()) ? [
             'type' => 'success',
-            'message' =>
-                __('flashes.schedule_created')
-        ] : ['type' => 'warning', 'message' => __('flashes.schedules_limit')];
+            'message' => __('flashes.schedule_created')
+        ] : [
+            'type' => 'warning',
+            'message' => __('flashes.schedules_limit')
+        ];
         return redirect()->route('home')->with($result['type'], $result['message'])->with('show', 'schedules');
     }
 
@@ -77,7 +85,9 @@ class ThemesController extends Controller
     {
         $schedule = new ThemeBackupScheduler(null, null, $id);
         $schedule->deleteSchedule();
-        return redirect()->route('home')->with('warning', __('flashes.schedule_deleted'))->
-        with('show', 'schedules');
+        return redirect()
+            ->route('home')
+            ->with('warning', __('flashes.schedule_deleted'))
+            ->with('show', 'schedules');
     }
 }

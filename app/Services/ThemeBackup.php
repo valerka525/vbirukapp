@@ -40,8 +40,7 @@ class ThemeBackup
         foreach ($schedules as $schedule) {
             if (strtotime(Carbon::now()) > (strtotime($schedule->updated_at) + 86400 * $schedule->interval)) {
                 $backup = new self(
-                    $schedule->theme_name, $schedule->theme_id, null,
-                    null, $schedule->user
+                    $schedule->theme_name, $schedule->theme_id, null, null, $schedule->user
                 );
                 $backup->saveBackupToStorage();
                 $schedule->touch();
@@ -64,18 +63,13 @@ class ThemeBackup
         $zip->open($zipFileFullPath, ZipArchive::CREATE);
         $theme = $shop->api()->rest(
             'GET',
-            '/admin/api/' . env('SHOPIFY_API_VERSION') . '/themes/' . $this->themeId
-            . '/assets.json'
+            '/admin/api/' . env('SHOPIFY_API_VERSION') . '/themes/' . $this->themeId . '/assets.json'
         )['body']['assets'];
         foreach ($theme as $key => $asset) {
             $asset = $shop->api()->rest(
                 'GET',
-                '/admin/api/' . env('SHOPIFY_API_VERSION') . '/themes/'
-                . $this->themeId . '/assets.json',
-                [
-                    'query' =>
-                        'asset[key]=' . $asset['key']
-                ]
+                '/admin/api/' . env('SHOPIFY_API_VERSION') . '/themes/' . $this->themeId . '/assets.json',
+                ['query' => 'asset[key]=' . $asset['key']]
             )['body']['asset'];
             if (array_key_exists('attachment', $asset->container)) {
                 $assetContent = $asset['attachment'];
@@ -94,10 +88,7 @@ class ThemeBackup
         );
         if ($backupsCount >= 10) {
             $oldestBackup = $shop->themes()->first();
-            $excessBackup = new self(
-                null, null, $oldestBackup['id'], $oldestBackup['
-            path']
-            );
+            $excessBackup = new self(null, null, $oldestBackup['id'], $oldestBackup['path']);
             $excessBackup->deleteBackupFromStorage();
         }
     }
