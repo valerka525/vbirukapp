@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+
 use function Osiset\ShopifyApp\getShopifyConfig;
 
 /*
@@ -14,9 +15,9 @@ use function Osiset\ShopifyApp\getShopifyConfig;
 |
 */
 
-Route::group(['prefix' => getShopifyConfig('prefix'), 'middleware' => ['itp', 'web', 'auth.shopify', 'billable']],
+Route::group(
+    ['prefix' => getShopifyConfig('prefix'), 'middleware' => ['itp', 'web', 'auth.shopify', 'billable']],
     function () {
-
         Route::get('/', 'App\ThemesController@home')->name('home');
         Route::get('/theme/make/{themeId}/{themeName}', 'App\ThemesController@makeBackup')->
         name('makeBackup');
@@ -28,16 +29,18 @@ Route::group(['prefix' => getShopifyConfig('prefix'), 'middleware' => ['itp', 'w
         name('addSchedule');
         Route::get('/schedule/delete/{id}', 'App\ThemesController@deleteSchedule')->
         name('deleteSchedule');
-
-
         /*
          * JWT Token Check for some ajax action via auth.token middleware
          *
         Route::post('/some-path', 'App\SomeAjaxControllerController@update')
             ->middleware(['auth.token', 'billable']);
         */
-    });
+    }
+);
 
-Route::group(['prefix' => 'script-tag', 'middleware' => ['web']], function () {
-    Route::get('/test', 'Script\TestController@index');
-});
+Route::group(
+    ['prefix' => 'script-tag', 'middleware' => ['web']],
+    function () {
+        Route::get('/test', 'Script\TestController@index');
+    }
+);

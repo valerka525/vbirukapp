@@ -26,12 +26,14 @@ class ThemeBackupScheduler
             return false;
         }
         $theme = preg_split("#/#", $this->scheduledTheme);
-        ThemeBackupSchedule::create([
-            'user_id' => $shop->id,
-            'theme_id' => $theme[0],
-            'theme_name' => $theme[1],
-            'interval' => $this->interval,
-        ]);
+        ThemeBackupSchedule::create(
+            [
+                'user_id' => $shop->id,
+                'theme_id' => $theme[0],
+                'theme_name' => $theme[1],
+                'interval' => $this->interval,
+            ]
+        );
         return true;
     }
 

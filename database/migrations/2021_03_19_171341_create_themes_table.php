@@ -13,13 +13,16 @@ class CreateThemesTable extends Migration
      */
     public function up()
     {
-        Schema::create('themes', function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->integer('user_id');
-            $table->string('name');
-            $table->string('path');
-            $table->timestamps();
-        });
+        Schema::create(
+            'themes',
+            function (Blueprint $table) {
+                $table->bigIncrements('id');
+                $table->integer('user_id');
+                $table->string('name');
+                $table->string('path');
+                $table->timestamps();
+            }
+        );
     }
 
     /**

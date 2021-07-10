@@ -13,13 +13,16 @@ class CreateThemeBackupSchedulesTable extends Migration
      */
     public function up()
     {
-        Schema::create('theme_backup_schedules', function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->integer('user_id');
-            $table->string('theme_id');
-            $table->string('interval');
-            $table->timestamps();
-        });
+        Schema::create(
+            'theme_backup_schedules',
+            function (Blueprint $table) {
+                $table->bigIncrements('id');
+                $table->integer('user_id');
+                $table->string('theme_id');
+                $table->string('interval');
+                $table->timestamps();
+            }
+        );
     }
 
     /**

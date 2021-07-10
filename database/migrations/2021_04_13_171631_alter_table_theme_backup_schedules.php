@@ -13,9 +13,12 @@ class AlterTableThemeBackupSchedules extends Migration
      */
     public function up()
     {
-        Schema::table('theme_backup_schedules', function (Blueprint $table) {
-            $table->string('theme_name')->after('theme_id');
-        });
+        Schema::table(
+            'theme_backup_schedules',
+            function (Blueprint $table) {
+                $table->string('theme_name')->after('theme_id');
+            }
+        );
     }
 
     /**
@@ -25,8 +28,11 @@ class AlterTableThemeBackupSchedules extends Migration
      */
     public function down()
     {
-        Schema::table('theme_backup_schedules', function (Blueprint $table) {
-            $table->dropColumn('theme_name');
-        });
+        Schema::table(
+            'theme_backup_schedules',
+            function (Blueprint $table) {
+                $table->dropColumn('theme_name');
+            }
+        );
     }
 }

@@ -83,7 +83,7 @@
             <select name="theme" class="custom-select my-1 mr-sm-2" id="inlineFormCustomSelectPref">
                 @foreach($themes as $theme)
                     <option
-                        value="{{ $theme['id'] }}/{{ $theme['name'] }}">{{ $theme['id'] }} {{ $theme['name'] }}
+                            value="{{ $theme['id'] }}/{{ $theme['name'] }}">{{ $theme['id'] }} {{ $theme['name'] }}
                         {{ $theme['updated_at'] }}</option>
                 @endforeach
             </select>

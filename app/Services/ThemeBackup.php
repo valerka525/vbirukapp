@@ -18,9 +18,14 @@ class ThemeBackup
     private $shop;
     private $createdAt;
 
-    public function __construct($themeName = null, $themeId = null, $backupId = null, $backupPath = null, $shop = null,
-                                $createdAt = null)
-    {
+    public function __construct(
+        $themeName = null,
+        $themeId = null,
+        $backupId = null,
+        $backupPath = null,
+        $shop = null,
+        $createdAt = null
+    ) {
         $this->themeName = $themeName;
         $this->themeId = $themeId;
         $this->backupId = $backupId;
@@ -34,8 +39,10 @@ class ThemeBackup
         $schedules = ThemeBackupSchedule::all();
         foreach ($schedules as $schedule) {
             if (strtotime(Carbon::now()) > (strtotime($schedule->updated_at) + 86400 * $schedule->interval)) {
-                $backup = new self($schedule->theme_name, $schedule->theme_id, null,
-                    null, $schedule->user);
+                $backup = new self(
+                    $schedule->theme_name, $schedule->theme_id, null,
+                    null, $schedule->user
+                );
                 $backup->saveBackupToStorage();
                 $schedule->touch();
             }
@@ -55,12 +62,21 @@ class ThemeBackup
         }
         $zip = new ZipArchive;
         $zip->open($zipFileFullPath, ZipArchive::CREATE);
-        $theme = $shop->api()->rest('GET', '/admin/api/' . env('SHOPIFY_API_VERSION') . '/themes/' . $this->themeId
-            . '/assets.json')['body']['assets'];
+        $theme = $shop->api()->rest(
+            'GET',
+            '/admin/api/' . env('SHOPIFY_API_VERSION') . '/themes/' . $this->themeId
+            . '/assets.json'
+        )['body']['assets'];
         foreach ($theme as $key => $asset) {
-            $asset = $shop->api()->rest('GET', '/admin/api/' . env('SHOPIFY_API_VERSION') . '/themes/'
-                . $this->themeId . '/assets.json', ['query' =>
-                'asset[key]=' . $asset['key']])['body']['asset'];
+            $asset = $shop->api()->rest(
+                'GET',
+                '/admin/api/' . env('SHOPIFY_API_VERSION') . '/themes/'
+                . $this->themeId . '/assets.json',
+                [
+                    'query' =>
+                        'asset[key]=' . $asset['key']
+                ]
+            )['body']['asset'];
             if (array_key_exists('attachment', $asset->container)) {
                 $assetContent = $asset['attachment'];
             } else {
@@ -69,15 +85,19 @@ class ThemeBackup
             $zip->addFromString($asset['key'], $assetContent);
         }
         $zip->close();
-        Theme::create([
-            'user_id' => $id,
-            'name' => $this->themeName,
-            'path' => $zipFileStoragePath,
-        ]);
+        Theme::create(
+            [
+                'user_id' => $id,
+                'name' => $this->themeName,
+                'path' => $zipFileStoragePath,
+            ]
+        );
         if ($backupsCount >= 10) {
             $oldestBackup = $shop->themes()->first();
-            $excessBackup = new self(null, null, $oldestBackup['id'], $oldestBackup['
-            path']);
+            $excessBackup = new self(
+                null, null, $oldestBackup['id'], $oldestBackup['
+            path']
+            );
             $excessBackup->deleteBackupFromStorage();
         }
     }
@@ -88,8 +108,11 @@ class ThemeBackup
         $publicArchive = md5_file($privateArchive) . '.zip';
         Storage::copy($this->backupPath, "/public/$publicArchive");
         $url = Storage::disk('public')->url($publicArchive);
-        $put = $this->shop->api()->rest('POST', '/admin/api/' . env('SHOPIFY_API_VERSION') . '/themes.json',
-            ['theme' => ['name' => "$this->themeName $this->createdAt", 'src' => $url, 'role' => 'main']]);
+        $put = $this->shop->api()->rest(
+            'POST',
+            '/admin/api/' . env('SHOPIFY_API_VERSION') . '/themes.json',
+            ['theme' => ['name' => "$this->themeName $this->createdAt", 'src' => $url, 'role' => 'main']]
+        );
         Storage::disk('public')->delete($publicArchive);
         if (!$put['errors']) {
             return true;
