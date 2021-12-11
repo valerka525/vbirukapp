@@ -115,6 +115,6 @@ class ThemeBackup
     public function deleteBackupFromStorage()
     {
         Storage::delete($this->backupPath);
-        Theme::where('id', $this->backupId)->delete();
+        Theme::destroy($this->backupId);
     }
 }

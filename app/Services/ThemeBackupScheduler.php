@@ -9,13 +9,11 @@ class ThemeBackupScheduler
 {
     private $interval;
     private $scheduledTheme;
-    private $scheduleId;
 
-    public function __construct($interval = null, $scheduledTheme = null, $scheduleId = null)
+    public function __construct($interval = null, $scheduledTheme = null)
     {
         $this->interval = $interval;
         $this->scheduledTheme = $scheduledTheme;
-        $this->scheduleId = $scheduleId;
     }
 
     public function addSchedule()
@@ -35,10 +33,5 @@ class ThemeBackupScheduler
             ]
         );
         return true;
-    }
-
-    public function deleteSchedule()
-    {
-        ThemeBackupSchedule::where('id', $this->scheduleId)->delete();
     }
 }

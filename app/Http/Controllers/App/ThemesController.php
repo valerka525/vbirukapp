@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Services\ThemeBackup;
 use App\Services\ThemeBackupScheduler;
 use App\Theme;
+use App\ThemeBackupSchedule;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -83,8 +84,7 @@ class ThemesController extends Controller
 
     protected static function deleteSchedule($id)
     {
-        $schedule = new ThemeBackupScheduler(null, null, $id);
-        $schedule->deleteSchedule();
+        ThemeBackupSchedule::destroy($id);
         return redirect()
             ->route('home')
             ->with('warning', __('flashes.schedule_deleted'))
