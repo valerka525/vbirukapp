@@ -30,7 +30,7 @@ class ThemeBackup
         $this->themeId = $themeId;
         $this->backupId = $backupId;
         $this->backupPath = $backupPath;
-        $this->shop = (is_null($shop)) ? Auth::user() : $shop; //
+        $this->shop = $shop;
         $this->createdAt = $createdAt;
     }
 
