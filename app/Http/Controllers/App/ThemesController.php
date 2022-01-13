@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\App;
 
 use App\Http\Controllers\Controller;
+use App\Jobs\MakeThemeBackup;
 use App\Services\ThemeBackup;
 use App\Services\ThemeBackupScheduler;
 use App\Theme;
@@ -31,11 +32,11 @@ class ThemesController extends Controller
 
     protected static function makeBackup($themeId, $themeName)
     {
-        $backup = new ThemeBackup($themeName, $themeId);
-        $backup->saveBackupToStorage();
+        $shop = Auth::user(); //
+        MakeThemeBackup::dispatch($themeName, $themeId, $shop);
         return redirect()
             ->route('home')
-            ->with('success', __('flashes.backup_created'))
+            ->with('success', __('flashes.backup_creating')) //
             ->with('show', 'backups');
     }
 

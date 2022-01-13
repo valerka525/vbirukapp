@@ -14,6 +14,7 @@ return [
     */
 
     'backup_created' => 'Backup has been created!',
+    'backup_creating' => 'Backup is being created. Please, refresh the page in a few minutes to check it!',
     'backup_published' => 'Backup has been published to your store!',
     'went_wrong' => 'Ooops. Something went wrong!',
     'backup_deleted' => 'Backup has been deleted!',

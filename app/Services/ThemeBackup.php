@@ -30,7 +30,7 @@ class ThemeBackup
         $this->themeId = $themeId;
         $this->backupId = $backupId;
         $this->backupPath = $backupPath;
-        $this->shop = (is_null($shop)) ? Auth::user() : $shop;
+        $this->shop = (is_null($shop)) ? Auth::user() : $shop; //
         $this->createdAt = $createdAt;
     }
 
@@ -59,12 +59,11 @@ class ThemeBackup
         if (Storage::missing("$id/themes")) {
             Storage::makeDirectory("$id/themes");
         }
-        $zip = new ZipArchive;
+        $zip = new ZipArchive();
         $zip->open($zipFileFullPath, ZipArchive::CREATE);
         $theme = $shop->api()->rest(
             'GET',
-            '/admin/api/' . env('SHOPIFY_API_VERSION') . '/themes/' . $this->themeId . '/assets.json'
-        )['body']['assets'];
+            '/admin/api/' . env('SHOPIFY_API_VERSION') . '/themes/' . $this->themeId . '/assets.json')['body']['assets'];
         foreach ($theme as $key => $asset) {
             $asset = $shop->api()->rest(
                 'GET',
