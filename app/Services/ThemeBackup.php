@@ -104,11 +104,13 @@ class ThemeBackup
             ['theme' => ['name' => "$this->themeName $this->createdAt", 'src' => $url, 'role' => 'main']]
         );
         Storage::disk('public')->delete($publicArchive);
+        /*
         if (!$put['errors']) {
             return true;
         } else {
             return false;
         }
+        */
     }
 
     public function deleteBackupFromStorage()

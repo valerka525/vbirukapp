@@ -5,7 +5,7 @@ namespace App\Http\Controllers\App;
 use App\Http\Controllers\Controller;
 use App\Jobs\DeleteThemeBackup;
 use App\Jobs\MakeThemeBackup;
-use App\Services\ThemeBackup;
+use App\Jobs\RestoreThemeBackup;
 use App\Services\ThemeBackupScheduler;
 use App\Theme;
 use App\ThemeBackupSchedule;
@@ -19,7 +19,7 @@ class ThemesController extends Controller
         $shop = Auth::user();
         $backups = $shop->themes;
         $schedules = $shop->schedules;
-        $themes = $shop->api()->rest('GET', '/admin/api/' . env('SHOPIFY_API_VERSION') . '/themes.json')['body']
+        $themes = $shop->api()->rest('GET', '/admin/api/'.env('SHOPIFY_API_VERSION').'/themes.json')['body']
         ['themes'];
         return view(
             'home.home',
@@ -43,22 +43,12 @@ class ThemesController extends Controller
 
     protected static function restoreBackup(Theme $backup)
     {
-        $backup = new ThemeBackup(
-            $backup['name'],
-            null,
-            null,
-            $backup['path'],
-            null,
-            $backup['created_at']
-        );
-        $result = ($backup->restoreBackupFromStorage()) ? [
-            'type' => 'success',
-            'message' => __('flashes.backup_published')
-        ] : [
-            'type' => 'warning',
-            'message' => __('flashes.went_wrong')
-        ];
+        $shop = Auth::user();
+        RestoreThemeBackup::dispatch($backup, $shop);
+        return redirect()->route('home')->with('success', __('flashes.backup_published'))->with('show', 'themes'); //
+        /*
         return redirect()->route('home')->with($result['type'], $result['message'])->with('show', 'themes');
+        */
     }
 
     protected static function deleteBackup(Theme $backup)
