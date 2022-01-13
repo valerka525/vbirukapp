@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\App;
 
 use App\Http\Controllers\Controller;
+use App\Jobs\DeleteThemeBackup;
 use App\Jobs\MakeThemeBackup;
 use App\Services\ThemeBackup;
 use App\Services\ThemeBackupScheduler;
@@ -32,7 +33,7 @@ class ThemesController extends Controller
 
     protected static function makeBackup($themeId, $themeName)
     {
-        $shop = Auth::user(); //
+        $shop = Auth::user();
         MakeThemeBackup::dispatch($themeName, $themeId, $shop);
         return redirect()
             ->route('home')
@@ -62,11 +63,10 @@ class ThemesController extends Controller
 
     protected static function deleteBackup(Theme $backup)
     {
-        $backup = new ThemeBackup(null, null, $backup['id'], $backup['path'], null);
-        $backup->deleteBackupFromStorage();
+        DeleteThemeBackup::dispatch($backup);
         return redirect()
             ->route('home')
-            ->with('warning', __('flashes.backup_deleted'))
+            ->with('warning', __('flashes.backup_deleted')) //
             ->with('show', 'backups');
     }
 
